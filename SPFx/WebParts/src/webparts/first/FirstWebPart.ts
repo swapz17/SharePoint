@@ -98,7 +98,8 @@ export default class FirstWebPart extends BaseClientSideWebPart<IFirstWebPartPro
         this.render();
       });
   }
-
+ 
+  // List options
   private loadLists(): Promise<IPropertyPaneDropdownOption[]> {
     return new Promise<IPropertyPaneDropdownOption[]>((resolve: (options: IPropertyPaneDropdownOption[]) => void, reject: (error: any) => void) => {
         resolve([{
