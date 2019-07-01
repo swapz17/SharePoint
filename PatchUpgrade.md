@@ -1,4 +1,4 @@
-SharePoint CU install approach
+#SharePoint CU install approach
 
 1.	Note current build version (Get-SPFarm).BuildVersion
 2.	Before installing the binaries turn off and disable services if running as per each VM role, note down services stopped 
