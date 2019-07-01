@@ -4,7 +4,7 @@
 2.    Before installing the binaries turn off and disable services if running as per each VM role, note down services stopped
 & disabled as per each VMs roles
 
-    Before installing the bits
+    # Before installing the bits
        * NET STOP SPTimerV4
        * NET STOP SPAdminV4
        * NET STOP SPTraceV4
@@ -84,6 +84,25 @@ b.	Stop user profile synchronization.
 3.	Antivirus, Antimalware, monitoring and logging applications running in background can lead to longer CU installation. Evaluate the option of turning off these services during the binary installation to improve time required for installation. 
 4.	Validate downtime and service disruptions that can happen on UAT environment before using this approach on PROD.
 5.	Open MS support ticket to have support for troubleshooting issues.
+
+## Troubleshooting
+
+Remove from AG
+ALTER AVAILABILITY GROUP [AGName] REMOVE DATABASE [DB_Name];
+
+Upgrade Db Powershell
+Upgrade-SPContentDatabase DB_Name -UseSnapshot -Verbose
+
+Add Db to AG
+ALTER AVAILABILITY GROUP [AGName] ADD DATABASE [DB_Name];
+
+Turn on HDR on Secondary DB
+ALTER DATABASE [DB_Name] SET HADR AVAILABILITY GROUP = [AGName];
+
+sp_who2
+kill 84
+ALTER DATABASE [DB_Name] SET MULTI_USER;
+ALTER DATABASE [DB_Name] SET READ_WRITE With No_Wait;
 
 Reference:
 https://blog.stefan-gossner.com/2016/04/29/sharepoint-2016-zero-downtime-patching-demystified/
