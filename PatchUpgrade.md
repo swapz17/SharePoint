@@ -1,36 +1,36 @@
-# SharePoint CU install approach
+# SharePoint patch install approach
 
-1.	Note current build version (Get-SPFarm).BuildVersion
-2.	Before installing the binaries turn off and disable services if running as per each VM role, note down services stopped 
+1.    Note current build version (Get-SPFarm).BuildVersion
+2.    Before installing the binaries turn off and disable services if running as per each VM role, note down services stopped
 & disabled as per each VMs roles
 
-# Before installing the bits
-NET STOP SPTimerV4
-NET STOP SPAdminV4
-NET STOP SPTraceV4
-NET STOP OSearch15  
-NET STOP SPSearchHostController 
-NET STOP IISADMIN
-NET STOP AppFabricCachingService
+    Before installing the bits
+       * NET STOP SPTimerV4
+       * NET STOP SPAdminV4
+       * NET STOP SPTraceV4
+       * NET STOP OSearch15  
+       * NET STOP SPSearchHostController
+       * NET STOP IISADMIN
+       * NET STOP AppFabricCachingService
+    
+    Set-Service -Name "SPTimerV4" -startuptype Disabled 
+    Set-Service -Name "SPadminV4" -startuptype Disabled
+    Set-Service -Name "SPTraceV4" -startuptype Disabled 
+    Set-Service -Name "OSearch15" -startuptype Disabled 
+    Set-Service -Name "SPSearchHostController" -startuptype Disabled 
+    Set-Service -Name "IISADMIN" -startuptype Disabled 
+    Set-Service -Name "AppFabricCachingService" -startuptype Disabled 
 
-Set-Service -Name "SPTimerV4" -startuptype Disabled 
-Set-Service -Name "SPadminV4" -startuptype Disabled
-Set-Service -Name "SPTraceV4" -startuptype Disabled 
-Set-Service -Name "OSearch15" -startuptype Disabled 
-Set-Service -Name "SPSearchHostController" -startuptype Disabled 
-Set-Service -Name "IISADMIN" -startuptype Disabled 
-Set-Service -Name "AppFabricCachingService" -startuptype Disabled 
+    Pause Search Service application on server hosting search components 
 
-# Pause Search Service application on server hosting search components 
+    $ssa=Get-SPEnterpriseSearchServiceApplication 
+    Suspend-SPEnterpriseSearchServiceApplication -Identity $ssa
 
-$ssa=Get-SPEnterpriseSearchServiceApplication 
-Suspend-SPEnterpriseSearchServiceApplication -Identity $ssa
-
-3.	Install April 2019 CU  binaries in multiple batches one VM at a time to ensure availability of farm. 
+3. Install April 2019 CU  binaries in multiple batches one VM at a time to ensure availability of farm. 
 Batch 1  –  WSP01, WSP07, WSP09 – Weekdays
 Batch 2  –  WSP02, WSP08, WSP10 – Weekdays
 Batch 3  –  WSP03, WSP05 – Weekend
-Batch 4  –  WSP04, WSP06 – Weekend 
+Batch 4  –  WSP04, WSP06 – Weekend
 
 4.	After installation of binaries turn on and enable services if they were disabled in step 2, refer list created in step 2
 
@@ -51,7 +51,7 @@ NET Start SPAdminv4
 NET Start SPTimerV4
 NET Start W3svc
 
-# Verify that all Search components become active after the update by typing the following command at the PowerShell command prompt, Rerun the command until no Search components are listed in the output
+Verify that all Search components become active after the update by typing the following command at the PowerShell command prompt, Rerun the command until no Search components are listed in the output
 Get-SPEnterpriseSearchStatus -SearchApplication $ssa | where {$_.State -ne "Active"} | fl
 
 # Resume Search Service application on server hosting search components
@@ -78,7 +78,7 @@ b.	Stop user profile synchronization.
 11.	Validate farm services and site collection available post completion of upgrade activity. Note upgraded build version (Get-SPFarm).BuildVersion
 
 
-Note:  
+## Note:  
 1.	Increasing CPU and RAM on SP farm VM during binaries installation can improve time required to install binaries
 2.	Increasing CPU and RAM on SQL VM during configuration wizard upgrade action can improve time required to upgrade databases
 3.	Antivirus, Antimalware, monitoring and logging applications running in background can lead to longer CU installation. Evaluate the option of turning off these services during the binary installation to improve time required for installation. 
