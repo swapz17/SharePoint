@@ -4,7 +4,8 @@
 2.    Before installing the binaries turn off and disable services if running as per each VM role, note down services stopped
 & disabled as per each VMs roles
 
-    # Before installing the bits
+```
+# Before installing the bits
       NET STOP SPTimerV4
       NET STOP SPAdminV4
       NET STOP SPTraceV4
@@ -20,12 +21,12 @@
     Set-Service -Name "SPSearchHostController" -startuptype Disabled 
     Set-Service -Name "IISADMIN" -startuptype Disabled 
     Set-Service -Name "AppFabricCachingService" -startuptype Disabled 
-
-    Pause Search Service application on server hosting search components 
-
+```
+Pause Search Service application on server hosting search components 
+```
     $ssa=Get-SPEnterpriseSearchServiceApplication 
     Suspend-SPEnterpriseSearchServiceApplication -Identity $ssa
-
+```
 3. Install April 2019 CU  binaries in multiple batches one VM at a time to ensure availability of farm.
 ```
     Batch 1  –  WSP01, WSP07, WSP09 – Weekdays
