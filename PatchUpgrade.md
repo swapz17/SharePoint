@@ -26,30 +26,32 @@
     $ssa=Get-SPEnterpriseSearchServiceApplication 
     Suspend-SPEnterpriseSearchServiceApplication -Identity $ssa
 
-3. Install April 2019 CU  binaries in multiple batches one VM at a time to ensure availability of farm. 
-Batch 1  –  WSP01, WSP07, WSP09 – Weekdays
-Batch 2  –  WSP02, WSP08, WSP10 – Weekdays
-Batch 3  –  WSP03, WSP05 – Weekend
-Batch 4  –  WSP04, WSP06 – Weekend
+3. Install April 2019 CU  binaries in multiple batches one VM at a time to ensure availability of farm.
+```
+    Batch 1  –  WSP01, WSP07, WSP09 – Weekdays
+    Batch 2  –  WSP02, WSP08, WSP10 – Weekdays
+    Batch 3  –  WSP03, WSP05 – Weekend
+    Batch 4  –  WSP04, WSP06 – Weekend
+ ```
 
 4.	After installation of binaries turn on and enable services if they were disabled in step 2, refer list created in step 2
 
-Set-Service -Name "SPTimerV4" -startuptype Automatic
-Set-Service -Name "SPadminv4" -startuptype Automatic 
-Set-Service -Name "OSearch15" -startuptype Automatic
-Set-Service -Name "SPSearchHostController" -startuptype Automatic
-Set-Service -Name "IISADMIN" -startuptype Automatic
-Set-Service -Name "AppFabricCachingService" -startuptype Automatic
-Set-Service -Name "SPTraceV4" -startuptype Automatic
+    Set-Service -Name "SPTimerV4" -startuptype Automatic
+    Set-Service -Name "SPadminv4" -startuptype Automatic 
+    Set-Service -Name "OSearch15" -startuptype Automatic
+    Set-Service -Name "SPSearchHostController" -startuptype Automatic
+    Set-Service -Name "IISADMIN" -startuptype Automatic
+    Set-Service -Name "AppFabricCachingService" -startuptype Automatic
+    Set-Service -Name "SPTraceV4" -startuptype Automatic
 
-NET  Start SPTraceV4
-NET  Start AppFabricCachingService
-NET Start IISADMIN 
-NET Start SPSearchHostController
-NET Start OSearch15 
-NET Start SPAdminv4
-NET Start SPTimerV4
-NET Start W3svc
+    NET  Start SPTraceV4
+    NET  Start AppFabricCachingService
+    NET Start IISADMIN 
+    NET Start SPSearchHostController
+    NET Start OSearch15 
+    NET Start SPAdminv4
+    NET Start SPTimerV4
+    NET Start W3svc
 
 Verify that all Search components become active after the update by typing the following command at the PowerShell command prompt, Rerun the command until no Search components are listed in the output
 Get-SPEnterpriseSearchStatus -SearchApplication $ssa | where {$_.State -ne "Active"} | fl
