@@ -5,13 +5,13 @@
 & disabled as per each VMs roles
 
     # Before installing the bits
-       * NET STOP SPTimerV4
-       * NET STOP SPAdminV4
-       * NET STOP SPTraceV4
-       * NET STOP OSearch15  
-       * NET STOP SPSearchHostController
-       * NET STOP IISADMIN
-       * NET STOP AppFabricCachingService
+      NET STOP SPTimerV4
+      NET STOP SPAdminV4
+      NET STOP SPTraceV4
+      NET STOP OSearch15  
+      NET STOP SPSearchHostController
+      NET STOP IISADMIN
+      NET STOP AppFabricCachingService
     
     Set-Service -Name "SPTimerV4" -startuptype Disabled 
     Set-Service -Name "SPadminV4" -startuptype Disabled
@@ -36,6 +36,7 @@
 
 4.	After installation of binaries turn on and enable services if they were disabled in step 2, refer list created in step 2
 
+```
     Set-Service -Name "SPTimerV4" -startuptype Automatic
     Set-Service -Name "SPadminv4" -startuptype Automatic 
     Set-Service -Name "OSearch15" -startuptype Automatic
@@ -52,16 +53,19 @@
     NET Start SPAdminv4
     NET Start SPTimerV4
     NET Start W3svc
-
+```
 Verify that all Search components become active after the update by typing the following command at the PowerShell command prompt, Rerun the command until no Search components are listed in the output
 Get-SPEnterpriseSearchStatus -SearchApplication $ssa | where {$_.State -ne "Active"} | fl
 
 # Resume Search Service application on server hosting search components
+```
 Resume-SPEnterpriseSearchServiceApplication -Identity $ssa
+```
 
 # After an update you may no longer have proper registry key or file system permissions, in that case run the following command
+```
 Initialize-SPResourceSecurity
-
+```
 
 5.	Restart VM to complete binaries installation
 
@@ -70,10 +74,13 @@ Initialize-SPResourceSecurity
 7.	Note the upgrade blockers listed in step 5, remediate upgrade blockers on UAT farm first before running remediation on PROD farm.
 
 8.	Clear the SharePoint Configuration Cache on all SP VMs immediately before running upgrade commands and wizard. 
-a.	Stop  search content source crawls 
-b.	Stop user profile synchronization.
+    a.	Stop  search content source crawls 
+    b.	Stop user profile synchronization.
 
-9.	Run Upgrade-SPContentDatabase with -UseSnapshot parameters. During upgrade, users see a ready-only version of the database, which is the snapshot. After upgrade users see upgraded content. The existing connections to the content database will be set to use the snapshot for the duration of the upgrade and then switched back after successful completion of upgrade. A failed upgrade reverts the database to its state when the snapshot was taken.
+9.	Run Upgrade-SPContentDatabase -UseSnapshot  with parameters . During upgrade, users see a ready-only version of the database, which is the snapshot. After upgrade users see upgraded content. The existing connections to the content database will be set to use the snapshot for the duration of the upgrade and then switched back after successful completion of upgrade. A failed upgrade reverts the database to its state when the snapshot was taken.
+```
+Upgrade-SPContentDatabase -UseSnapshot 
+```
 
 10.	Run the SharePoint configuration wizard UI to upgrade all the SharePoint configuration and service databases and VMs in the batches as given in step 1, only during weekend. Choose the first VM to run configuration wizard UI hosting the Central Admin site. During the configuration wizard run on first VM farm databases are upgraded, this would cause farm downtime. Subsequent run of configuration wizard UI on remaining VMs should not cause an entire farm downtime but only the VM running configuration wizard be unavailable.
 
