@@ -38,6 +38,7 @@ Pause Search Service application on server hosting search components
 4.	After installation of binaries turn on and enable services if they were disabled in step 2, refer list created in step 2
 
 ```
+   # After installing the bits
     Set-Service -Name "SPTimerV4" -startuptype Automatic
     Set-Service -Name "SPadminv4" -startuptype Automatic 
     Set-Service -Name "OSearch15" -startuptype Automatic
