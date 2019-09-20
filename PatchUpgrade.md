@@ -27,7 +27,7 @@ Pause Search Service application on server hosting search components
     $ssa=Get-SPEnterpriseSearchServiceApplication 
     Suspend-SPEnterpriseSearchServiceApplication -Identity $ssa
 ```
-3. Install April 2019 CU  binaries in multiple batches one VM at a time to ensure availability of farm.
+3.   Install April 2019 CU  binaries in multiple batches one VM at a time to ensure availability of farm.
 ```
     Batch 1  –  WSP01, WSP07, WSP09 – Weekdays
     Batch 2  –  WSP02, WSP08, WSP10 – Weekdays
@@ -56,22 +56,27 @@ Pause Search Service application on server hosting search components
     NET Start SPTimerV4
     NET Start W3svc
 ```
-Verify that all Search components become active after the update by typing the following command at the PowerShell command prompt, Rerun the command until no Search components are listed in the output
+5.   Verify that all Search components become active after the update by typing the following command at the PowerShell command prompt, Rerun the command until no Search components are listed in the output
+```
 Get-SPEnterpriseSearchStatus -SearchApplication $ssa | where {$_.State -ne "Active"} | fl
-
-# Resume Search Service application on server hosting search components
+```
+6.   Resume Search Service application on server hosting search components
 ```
 Resume-SPEnterpriseSearchServiceApplication -Identity $ssa
 ```
 
-# After an update you may no longer have proper registry key or file system permissions, in that case run the following command
+7.   After an update you may no longer have proper registry key or file system permissions, in that case run the following command
 ```
 Initialize-SPResourceSecurity
 ```
 
 5.	Restart VM to complete binaries installation
 
-6.	Run Test-SPContentDatabase for all content database latest copies on UAT farm. This cmdlet can be issued against a content database currently attached to the farm, or a content database that is not connected to the farm. Cmdlet does not change any of the data or structure of the content database, but can cause load on the database while the checks are in progress, which could temporarily block use of the content This cmdlet should only be used against a content database that is currently under low or no usage. 
+6.	Run Test-SPContentDatabase for all content database latest copies on UAT farm. 
+```
+Test-SPContentDatabase
+```
+This cmdlet can be issued against a content database currently attached to the farm, or a content database that is not connected to the farm. Cmdlet does not change any of the data or structure of the content database, but can cause load on the database while the checks are in progress, which could temporarily block use of the content This cmdlet should only be used against a content database that is currently under low or no usage. 
 
 7.	Note the upgrade blockers listed in step 5, remediate upgrade blockers on UAT farm first before running remediation on PROD farm.
 
@@ -86,8 +91,10 @@ Upgrade-SPContentDatabase -UseSnapshot
 
 10.	Run the SharePoint configuration wizard UI to upgrade all the SharePoint configuration and service databases and VMs in the batches as given in step 1, only during weekend. Choose the first VM to run configuration wizard UI hosting the Central Admin site. During the configuration wizard run on first VM farm databases are upgraded, this would cause farm downtime. Subsequent run of configuration wizard UI on remaining VMs should not cause an entire farm downtime but only the VM running configuration wizard be unavailable.
 
-11.	Validate farm services and site collection available post completion of upgrade activity. Note upgraded build version (Get-SPFarm).BuildVersion
-
+11.	Validate farm services and site collection available post completion of upgrade activity. Note upgraded build version 
+```
+(Get-SPFarm).BuildVersion # Note this may not change in certain conditions 
+```
 
 ## Note:  
 1.	Increasing CPU and RAM on SP farm VM during binaries installation can improve time required to install binaries
@@ -98,23 +105,32 @@ Upgrade-SPContentDatabase -UseSnapshot
 
 ## Troubleshooting
 
-Remove from AG
+1. Remove from AG
+```
 ALTER AVAILABILITY GROUP [AGName] REMOVE DATABASE [DB_Name];
-
-Upgrade Db Powershell
+```
+2. Upgrade Database via Powershell command
+```
 Upgrade-SPContentDatabase DB_Name -UseSnapshot -Verbose
+```
 
-Add Db to AG
+3. Add Database to Availabiltiy Group
+```
 ALTER AVAILABILITY GROUP [AGName] ADD DATABASE [DB_Name];
+```
 
-Turn on HDR on Secondary DB
+4. Turn on HDR on Secondary DB
+```
 ALTER DATABASE [DB_Name] SET HADR AVAILABILITY GROUP = [AGName];
+```
 
+```
 sp_who2
 kill 84
 ALTER DATABASE [DB_Name] SET MULTI_USER;
 ALTER DATABASE [DB_Name] SET READ_WRITE With No_Wait;
+```
 
-Reference:
-https://blog.stefan-gossner.com/2016/04/29/sharepoint-2016-zero-downtime-patching-demystified/
-https://docs.microsoft.com/en-us/SharePoint/upgrade-and-update/install-a-software-update
+## Reference:
+*     https://blog.stefan-gossner.com/2016/04/29/sharepoint-2016-zero-downtime-patching-demystified/
+*     https://docs.microsoft.com/en-us/SharePoint/upgrade-and-update/install-a-software-update
