@@ -135,5 +135,5 @@ ALTER DATABASE [DB_Name] SET READ_WRITE With No_Wait;
 ```
 
 ## Reference:
-*     https://blog.stefan-gossner.com/2016/04/29/sharepoint-2016-zero-downtime-patching-demystified/
-*     https://docs.microsoft.com/en-us/SharePoint/upgrade-and-update/install-a-software-update
+ https://blog.stefan-gossner.com/2016/04/29/sharepoint-2016-zero-downtime-patching-demystified/
+ https://docs.microsoft.com/en-us/SharePoint/upgrade-and-update/install-a-software-update
