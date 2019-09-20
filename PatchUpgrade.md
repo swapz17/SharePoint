@@ -75,17 +75,16 @@ Initialize-SPResourceSecurity
 
 8.    Restart VM to complete binaries installation
 
-9.	Run Test-SPContentDatabase for all content database latest copies on UAT farm. 
+9.	Run Test-SPContentDatabase for all content database latest copies on UAT farm. This cmdlet can be issued against a content database currently attached to the farm, or a content database that is not connected to the farm. Cmdlet does not change any of the data or structure of the content database, but can cause load on the database while the checks are in progress, which could temporarily block use of the content This cmdlet should only be used against a content database that is currently under low or no usage.
 ```
 Test-SPContentDatabase
 ```
-This cmdlet can be issued against a content database currently attached to the farm, or a content database that is not connected to the farm. Cmdlet does not change any of the data or structure of the content database, but can cause load on the database while the checks are in progress, which could temporarily block use of the content This cmdlet should only be used against a content database that is currently under low or no usage. 
 
 10.    Note the upgrade blockers listed in step 5, remediate upgrade blockers on UAT farm first before running remediation on PROD farm.
 
 11.    Clear the SharePoint Configuration Cache on all SP VMs immediately before running upgrade commands and wizard. 
-    a.    Stop  search content source crawls 
-    b.    Stop user profile synchronization.
+a.    Stop  search content source crawls 
+b.    Stop user profile synchronization.
 
 12.    Run Upgrade-SPContentDatabase -UseSnapshot  with parameters . During upgrade, users see a ready-only version of the database, which is the snapshot. After upgrade users see upgraded content. The existing connections to the content database will be set to use the snapshot for the duration of the upgrade and then switched back after successful completion of upgrade. A failed upgrade reverts the database to its state when the snapshot was taken.
 ```
