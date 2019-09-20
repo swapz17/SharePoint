@@ -92,7 +92,7 @@ This cmdlet can be issued against a content database currently attached to the f
 Upgrade-SPContentDatabase -UseSnapshot 
 ```
 
-13.     Run the SharePoint configuration wizard UI to upgrade all the SharePoint configuration and service databases and VMs in the batches as given in step 1, only during weekend. Choose the first VM to run configuration wizard UI hosting the Central Admin site. During the configuration wizard run on first VM farm databases are upgraded, this would cause farm downtime. Subsequent run of configuration wizard UI on remaining VMs should not cause an entire farm downtime but only the VM running configuration wizard be unavailable.
+13.    Run the SharePoint configuration wizard UI to upgrade all the SharePoint configuration and service databases and VMs in the batches as given in step 1, only during weekend. Choose the first VM to run configuration wizard UI hosting the Central Admin site. During the configuration wizard run on first VM farm databases are upgraded, this would cause farm downtime. Subsequent run of configuration wizard UI on remaining VMs should not cause an entire farm downtime but only the VM running configuration wizard be unavailable.
 
 14.    Validate farm services and site collection available post completion of upgrade activity. Note upgraded build version 
 ```
