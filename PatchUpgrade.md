@@ -1,6 +1,9 @@
 # SharePoint patch install approach
 
-1.    Note current build version (Get-SPFarm).BuildVersion
+1.    Note current build version 
+```
+(Get-SPFarm).BuildVersion
+```
 2.    Before installing the binaries turn off and disable services if running as per each VM role, note down services stopped
 & disabled as per each VMs roles
 
@@ -27,7 +30,7 @@ Pause Search Service application on server hosting search components
     $ssa=Get-SPEnterpriseSearchServiceApplication 
     Suspend-SPEnterpriseSearchServiceApplication -Identity $ssa
 ```
-3.   Install April 2019 CU  binaries in multiple batches one VM at a time to ensure availability of farm.
+3.    Install April 2019 CU  binaries in multiple batches one VM at a time to ensure availability of farm.
 ```
     Batch 1  –  WSP01, WSP07, WSP09 – Weekdays
     Batch 2  –  WSP02, WSP08, WSP10 – Weekdays
@@ -56,42 +59,42 @@ Pause Search Service application on server hosting search components
     NET Start SPTimerV4
     NET Start W3svc
 ```
-5.   Verify that all Search components become active after the update by typing the following command at the PowerShell command prompt, Rerun the command until no Search components are listed in the output
+5.    Verify that all Search components become active after the update by typing the following command at the PowerShell command prompt, Rerun the command until no Search components are listed in the output
 ```
 Get-SPEnterpriseSearchStatus -SearchApplication $ssa | where {$_.State -ne "Active"} | fl
 ```
-6.   Resume Search Service application on server hosting search components
+6.    Resume Search Service application on server hosting search components
 ```
 Resume-SPEnterpriseSearchServiceApplication -Identity $ssa
 ```
 
-7.   After an update you may no longer have proper registry key or file system permissions, in that case run the following command
+7.    After an update you may no longer have proper registry key or file system permissions, in that case run the following command
 ```
 Initialize-SPResourceSecurity
 ```
 
-5.	Restart VM to complete binaries installation
+8.    Restart VM to complete binaries installation
 
-6.	Run Test-SPContentDatabase for all content database latest copies on UAT farm. 
+9.	Run Test-SPContentDatabase for all content database latest copies on UAT farm. 
 ```
 Test-SPContentDatabase
 ```
 This cmdlet can be issued against a content database currently attached to the farm, or a content database that is not connected to the farm. Cmdlet does not change any of the data or structure of the content database, but can cause load on the database while the checks are in progress, which could temporarily block use of the content This cmdlet should only be used against a content database that is currently under low or no usage. 
 
-7.	Note the upgrade blockers listed in step 5, remediate upgrade blockers on UAT farm first before running remediation on PROD farm.
+10.    Note the upgrade blockers listed in step 5, remediate upgrade blockers on UAT farm first before running remediation on PROD farm.
 
-8.	Clear the SharePoint Configuration Cache on all SP VMs immediately before running upgrade commands and wizard. 
-    a.	Stop  search content source crawls 
-    b.	Stop user profile synchronization.
+11.    Clear the SharePoint Configuration Cache on all SP VMs immediately before running upgrade commands and wizard. 
+    a.    Stop  search content source crawls 
+    b.    Stop user profile synchronization.
 
-9.	Run Upgrade-SPContentDatabase -UseSnapshot  with parameters . During upgrade, users see a ready-only version of the database, which is the snapshot. After upgrade users see upgraded content. The existing connections to the content database will be set to use the snapshot for the duration of the upgrade and then switched back after successful completion of upgrade. A failed upgrade reverts the database to its state when the snapshot was taken.
+12.    Run Upgrade-SPContentDatabase -UseSnapshot  with parameters . During upgrade, users see a ready-only version of the database, which is the snapshot. After upgrade users see upgraded content. The existing connections to the content database will be set to use the snapshot for the duration of the upgrade and then switched back after successful completion of upgrade. A failed upgrade reverts the database to its state when the snapshot was taken.
 ```
 Upgrade-SPContentDatabase -UseSnapshot 
 ```
 
-10.	Run the SharePoint configuration wizard UI to upgrade all the SharePoint configuration and service databases and VMs in the batches as given in step 1, only during weekend. Choose the first VM to run configuration wizard UI hosting the Central Admin site. During the configuration wizard run on first VM farm databases are upgraded, this would cause farm downtime. Subsequent run of configuration wizard UI on remaining VMs should not cause an entire farm downtime but only the VM running configuration wizard be unavailable.
+13.     Run the SharePoint configuration wizard UI to upgrade all the SharePoint configuration and service databases and VMs in the batches as given in step 1, only during weekend. Choose the first VM to run configuration wizard UI hosting the Central Admin site. During the configuration wizard run on first VM farm databases are upgraded, this would cause farm downtime. Subsequent run of configuration wizard UI on remaining VMs should not cause an entire farm downtime but only the VM running configuration wizard be unavailable.
 
-11.	Validate farm services and site collection available post completion of upgrade activity. Note upgraded build version 
+14.    Validate farm services and site collection available post completion of upgrade activity. Note upgraded build version 
 ```
 (Get-SPFarm).BuildVersion # Note this may not change in certain conditions 
 ```
