@@ -13,7 +13,7 @@ namespace SPOConsole
     {
         static void Main(string[] args)
         {
-            string URL = "";
+            string URL = "https://swava.sharepoint.com/sites/SPODev";
             string username = ConfigurationManager.AppSettings.Get("username");
             string passtext = ConfigurationManager.AppSettings.Get("password");
             var password = new SecureString();
