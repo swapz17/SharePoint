@@ -1,0 +1,6 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/SPOConsole/packages/Microsoft.SharePointOnline.CSOM.16.1.20324.12000
+/SPOConsole/SPOConsole/bin/Debug
