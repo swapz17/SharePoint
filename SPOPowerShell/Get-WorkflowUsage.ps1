@@ -57,7 +57,7 @@ try {
         $siteUrl = $_.Url
         try{
             Connect-PnPOnline  $siteUrl -ClientId $clientId -ClientSecret $clientSecret
-            Write-Verbose $siteUrl
+            Write-Host $siteUrl
             # site workflows
             Get-PnPWeb -Includes ("WorkflowAssociations") |
             ForEach-Object {
@@ -65,7 +65,7 @@ try {
                     $_.WorkflowAssociations | 
                     ForEach-Object{
                         param($asocs =$_)
-                        Write-Verbose $asocs.HistoryListTitle
+                        Write-Host $asocs.HistoryListTitle
                         if("NintexWorkflowHistory" -ne  $asocs.HistoryListTitle){
                             $wfname = $asocs.Name
                             # Workflow histroy Item since 1-Jan-2020
@@ -84,12 +84,12 @@ try {
             Where-Object {$exclusionList -notcontains $_.Title} |
             ForEach-Object {
                 param($list=$_)
-                Write-Verbose $list.Title
+                Write-Host $list.Title
                 if(0 -ne $_.WorkflowAssociations.Count){
                     $_.WorkflowAssociations | 
                     ForEach-Object{
                         param($asocs =$_)
-                        Write-Verbose $asocs.HistoryListTitle
+                        Write-Host $asocs.HistoryListTitle
                         if("NintexWorkflowHistory" -ne  $asocs.HistoryListTitle){
                             $wfname = $asocs.Name
                             # Workflow histroy Item since 1-Apr-2019
