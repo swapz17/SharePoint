@@ -11,7 +11,8 @@ Import-Module SharePointPnPPowerShellOnline -WarningAction SilentlyContinue
 ##########################################################################################
 $inputFile = $PSScriptRoot + "\sites.csv"
 $outputFile = $PSScriptRoot + "\workflowusage.csv"
-$errorFile = $PSScriptRoot + "\error.csv" 
+$siteError = $PSScriptRoot + "\siteerror.csv"
+$listError = $PSScriptRoot + "\listerror.csv"  
 $clientId =""  # change here
 $clientSecret = ""  # change here
 ##########################################################################################
@@ -32,14 +33,23 @@ try {
     }
     Add-Content $outputFile "Site,List,WF Name,Last Used"
 
-    $fcheck = Test-Path $errorFile
+    $fcheck = Test-Path $siteError
     if(!$fcheck){
-    New-Item -Path $errorFile -ItemType File
+    New-Item -Path $siteError -ItemType File
     }
     else {
-        Clear-Content $errorFile
+        Clear-Content $siteError
     }
-    Add-Content $errorFile "Site,Error Message"
+    Add-Content $siteError "Site,Error Message"
+
+    $fcheck = Test-Path $listError
+    if(!$fcheck){
+    New-Item -Path $listError -ItemType File
+    }
+    else {
+        Clear-Content $listError
+    }
+    Add-Content $listError "Site,List,Error Message"
 
     $sites = Import-Csv $inputFile
     $sites |
@@ -63,7 +73,7 @@ try {
                             Get-PnPListItem -List $asocs.HistoryListTitle -Query $query |
                             Select-Object -First 1 |
                             ForEach-Object {
-                                Add-Content $outputFile ($siteUrl + "," + $list.RootFolder.ServerRelativeUrl + "," + $wfname + "," + $_.FieldValues.Occurred.ToLocalTime())
+                                Add-Content $outputFile ($siteUrl + ",Site Workflow," + $wfname.Replace(","," ") + "," + $_.FieldValues.Occurred.ToLocalTime())
                             }
                         }
                     }       
@@ -84,17 +94,21 @@ try {
                             $wfname = $asocs.Name
                             # Workflow histroy Item since 1-Apr-2019
                             $query = "<View><Query><Where><And><Eq><FieldRef Name='WorkflowAssociation'/><Value Type='Text'>{" + $asocs.Id + "}</Value></Eq><Gt><FieldRef Name='Occurred'/><Value Type='DateTime'>2019-04-01T01:01:01Z</Value></Gt></And></Where><OrderBy><FieldRef Name='ID' Ascending='FALSE' /></OrderBy></Query><RowLimit Paged='true'>5</RowLimit></View>"
-                            Get-PnPListItem -List $asocs.HistoryListTitle -Query $query |
-                            Select-Object -First 1 |
-                            ForEach-Object {
-                                Add-Content $outputFile ($siteUrl + ",Site Workflow," + $wfname + "," + $_.FieldValues.Occurred.ToLocalTime())
+                            try{
+                                Get-PnPListItem -List $asocs.HistoryListTitle -Query $query |
+                                Select-Object -First 1 |
+                                ForEach-Object {
+                                    Add-Content $outputFile ($siteUrl + "," + $list.RootFolder.ServerRelativeUrl + "," + $wfname.Replace(","," ") + "," + $_.FieldValues.Occurred.ToLocalTime())
+                                }
+                            }catch{
+                                Add-Content $listError ($siteUrl + "," + $list.RootFolder.ServerRelativeUrl  + "," +  $error[0].Message)
                             }
                         }
                     }       
                 }
             }
         }catch{
-            Add-Content $errorFile ($siteUrl + "," + $error[0].Message)
+            Add-Content $siteError ($siteUrl + "," + $error[0].Message)
         }
     }
 }
