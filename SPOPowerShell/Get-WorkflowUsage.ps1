@@ -12,12 +12,11 @@ Import-Module SharePointPnPPowerShellOnline -WarningAction SilentlyContinue
 $inputFile = $PSScriptRoot + "\sites.csv"
 $outputFile = $PSScriptRoot + "\workflowusage.csv"
 $errorFile = $PSScriptRoot + "\error.csv" 
-$clientId ="" 
-$clientSecret = ""
-$siteUrl = "" # Keep blank
-
+$clientId =""  # change here
+$clientSecret = ""  # change here
 ##########################################################################################
 
+$siteUrl = "" # Keep blank
 $exclusionList = @("Access Requests","App Packages","appdata","appfiles","Apps in Testing","Apps for SharePoint","Hub Settings","Channel Settings","Cache Profiles","Composed Looks","Content and Structure Reports","Content type publishing error log","Converted Forms",
 "Device Channels","Form Templates","fpdatasources","Get started with Apps for Office and SharePoint","List Template Gallery", "Long Running Operation Status","Maintenance Log Library", "Images", "site collection images"
 ,"Master Docs","Master Page Gallery","MicroFeed","NintexFormXml","Quick Deploy Items","Relationships List","Reusable Content","Reporting Metadata", "Reporting Templates", "Search Config List","Site Assets","Preservation Hold Library",
